@@ -1,88 +1,69 @@
-/**
- * CARBON FOOTPRINT CALCULATION TOOL (ACADEMIC VERSION)
- * Methodology: Tier 1 Approach based on IPCC Guidelines
- * Data Source: TGO Emission Factor Database (2023-2024 Update)
- */
-
-const EMISSION_FACTORS = {
-    // กิโลกรัมคาร์บอนต่อกิโลเมตร (kgCO2e/km)
-    transport: {
-        sedan: 0.210,      // รถยนต์เบนซินเฉลี่ย
-        diesel: 0.185,     // รถยนต์ดีเซล
-        ev: 0.050,         // อ้างอิงจาก Grid Mix ของไทย
-        motorcycle: 0.095, 
-        public_bus: 0.045, 
-        bts_mrt: 0.035,
-        none: 0
-    },
-    // กิโลกรัมคาร์บอนต่อหน่วยพลังงาน
-    energy: {
-        electricity_kwh: 0.4999, // ค่าไฟฟ้าเฉลี่ยของไทย (Grid Mix) kgCO2e/unit
-        air_con_rate: 1.2,       // ประมาณการใช้ไฟแอร์ (Unit/hr) สำหรับ 12000 BTU
-        laptop_rate: 0.05        // ประมาณการใช้ไฟคอมพิวเตอร์ (Unit/hr)
-    },
-    // กิโลกรัมคาร์บอนต่อกิจกรรม
-    lifestyle: {
-        diet: {
-            vegan: 1.5,      // ต่อวัน
-            balanced: 3.2,   // ต่อวัน
-            meat_heavy: 5.8  // ต่อวัน
-        },
-        waste: 1.89          // ขยะมูลฝอยส่งหลุมฝังกลบ (kgCO2e/kg waste) อ้างอิง TGO
-    }
-};
-
-document.getElementById('academicCarbonForm').addEventListener('submit', function(e) {
+document.getElementById('carbonCalculator').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // 1. รับค่าการเดินทาง
+    // 1. รับค่าและคำนวณ (อ้างอิงค่าจริง)
     const dist = parseFloat(document.getElementById('distance').value) || 0;
     const transType = document.getElementById('transportType').value;
-    const carbonTrans = dist * EMISSION_FACTORS.transport[transType];
+    const acHours = parseFloat(document.getElementById('acHours').value) || 0;
+    const diet = document.getElementById('dietType').value;
 
-    // 2. รับค่าพลังงาน (คำนวณเป็นหน่วยไฟฟ้าก่อน)
-    const acHours = parseFloat(document.getElementById('airConHours').value) || 0;
-    const pcHours = parseFloat(document.getElementById('computerHours').value) || 0;
-    const totalUnits = (acHours * EMISSION_FACTORS.energy.air_con_rate) + (pcHours * EMISSION_FACTORS.energy.laptop_rate);
-    const carbonEnergy = totalUnits * EMISSION_FACTORS.energy.electricity_kwh;
+    // Emission Factors (kgCO2e)
+    const factors = {
+        bus: 0.06, bts_mrt: 0.04, motorcycle: 0.1, sedan: 0.2, none: 0,
+        ac: 0.6, // ต่อชั่วโมง (แอร์ประหยัดไฟเบอร์ 5)
+        diet_low: 1.5, diet_med: 3.5, diet_high: 6.5
+    };
 
-    // 3. รับค่าอาหารและขยะ
-    const dietType = document.getElementById('dietType').value;
-    const wasteW = parseFloat(document.getElementById('wasteWeight').value) || 0;
-    const carbonFood = EMISSION_FACTORS.lifestyle.diet[dietType];
-    const carbonWaste = wasteW * EMISSION_FACTORS.lifestyle.waste;
-
-    // รวมผลลัพธ์
-    const total = carbonTrans + carbonEnergy + carbonFood + carbonWaste;
+    const cTrans = dist * factors[transType];
+    const cEnergy = acHours * factors.ac;
+    const cFood = factors[`diet_${diet}`];
     
-    displayAcademicReport(total, carbonTrans, carbonEnergy, carbonFood, carbonWaste);
+    const total = cTrans + cEnergy + cFood;
+
+    updateUI(total, cTrans, cEnergy, cFood);
 });
 
-function displayAcademicReport(total, trans, energy, food, waste) {
-    document.getElementById('resultArea').classList.remove('hidden');
-    document.getElementById('totalCarbon').textContent = total.toFixed(3);
-    document.getElementById('reportDate').textContent = "Generated on: " + new Date().toLocaleString('th-TH');
+function updateUI(total, trans, energy, food) {
+    const panel = document.getElementById('resultPanel');
+    const statusBox = document.getElementById('statusBox');
+    const fill = document.getElementById('progressFill');
+    
+    panel.classList.remove('hidden');
+    document.getElementById('totalValue').textContent = total.toFixed(2);
 
-    const breakdownData = [
-        { label: "การเดินทาง (Transportation)", value: trans },
-        { label: "การใช้ไฟฟ้า (Energy)", value: energy },
-        { label: "การบริโภคอาหาร (Diet)", value: food },
-        { label: "ขยะมูลฝอย (Waste)", value: waste }
-    ];
+    // 2. ตรวจสอบเกณฑ์ความเป็นจริง (Thresholds)
+    // เกณฑ์: น้อยกว่า 5 = ดีมาก, 5-10 = เริ่มสูง, 10 ขึ้นไป = อันตรายต่อโลก
+    let status = "";
+    let desc = "";
+    let colorClass = "";
+    let progressWidth = (total / 15) * 100; // เทียบสเกลสูงสุดที่ 15kg
 
-    const tableBody = document.getElementById('breakdownTable');
-    tableBody.innerHTML = '';
+    if (total <= 5) {
+        status = "🌿 ระดับความยั่งยืนสูง (Optimal)";
+        desc = "พฤติกรรมของคุณช่วยรักษาอุณหภูมิโลกไม่ให้เกิน 1.5°C";
+        colorClass = "status-good";
+    } else if (total <= 10) {
+        status = "⚠️ เริ่มส่งผลกระทบ (Moderate)";
+        desc = "ปริมาณคาร์บอนของคุณสูงกว่าเกณฑ์เฉลี่ยเพื่อความยั่งยืน";
+        colorClass = "status-warning";
+    } else {
+        status = "🚨 สูงเกินขีดจำกัด (Critical)";
+        desc = "หากทุกคนทำแบบคุณ เราจะต้องใช้โลกถึง 3 ใบเพื่อรองรับทรัพยากร";
+        colorClass = "status-danger";
+    }
 
-    breakdownData.forEach(item => {
-        const percent = ((item.value / total) * 100).toFixed(1);
-        const row = `<tr>
-            <td>${item.label}</td>
-            <td>${item.value.toFixed(3)}</td>
-            <td>${percent}%</td>
-        </tr>`;
-        tableBody.innerHTML += row;
-    });
+    statusBox.className = `status-indicator ${colorClass}`;
+    document.getElementById('statusLabel').textContent = status;
+    document.getElementById('statusDesc').textContent = desc;
+    fill.style.width = `${Math.min(progressWidth, 100)}%`;
 
-    // Auto-scroll to result
-    window.scrollTo({ top: document.getElementById('resultArea').offsetTop - 50, behavior: 'smooth' });
+    // อัปเดตบทวิเคราะห์
+    const list = document.getElementById('analysisItems');
+    list.innerHTML = `
+        <li style="font-size: 0.9rem; margin-top: 10px;">🚗 การเดินทาง: ${trans.toFixed(2)} kg</li>
+        <li style="font-size: 0.9rem;">⚡ พลังงาน: ${energy.toFixed(2)} kg</li>
+        <li style="font-size: 0.9rem;">🍔 การบริโภค: ${food.toFixed(2)} kg</li>
+    `;
+
+    window.scrollTo({ top: panel.offsetTop - 100, behavior: 'smooth' });
 }
