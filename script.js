@@ -1,88 +1,88 @@
-/* --- โค้ดคำนวณคาร์บอนฟุตพริ้นท์ (Student Edition) --- */
-/* พัฒนาโดยนักศึกษา เพื่อใช้ภายในมหาวิทยาลัย */
+/**
+ * CARBON FOOTPRINT CALCULATION TOOL (ACADEMIC VERSION)
+ * Methodology: Tier 1 Approach based on IPCC Guidelines
+ * Data Source: TGO Emission Factor Database (2023-2024 Update)
+ */
 
-// รอให้หน้าเว็บโหลดเสร็จก่อน
-document.addEventListener('DOMContentLoaded', function() {
+const EMISSION_FACTORS = {
+    // กิโลกรัมคาร์บอนต่อกิโลเมตร (kgCO2e/km)
+    transport: {
+        sedan: 0.210,      // รถยนต์เบนซินเฉลี่ย
+        diesel: 0.185,     // รถยนต์ดีเซล
+        ev: 0.050,         // อ้างอิงจาก Grid Mix ของไทย
+        motorcycle: 0.095, 
+        public_bus: 0.045, 
+        bts_mrt: 0.035,
+        none: 0
+    },
+    // กิโลกรัมคาร์บอนต่อหน่วยพลังงาน
+    energy: {
+        electricity_kwh: 0.4999, // ค่าไฟฟ้าเฉลี่ยของไทย (Grid Mix) kgCO2e/unit
+        air_con_rate: 1.2,       // ประมาณการใช้ไฟแอร์ (Unit/hr) สำหรับ 12000 BTU
+        laptop_rate: 0.05        // ประมาณการใช้ไฟคอมพิวเตอร์ (Unit/hr)
+    },
+    // กิโลกรัมคาร์บอนต่อกิจกรรม
+    lifestyle: {
+        diet: {
+            vegan: 1.5,      // ต่อวัน
+            balanced: 3.2,   // ต่อวัน
+            meat_heavy: 5.8  // ต่อวัน
+        },
+        waste: 1.89          // ขยะมูลฝอยส่งหลุมฝังกลบ (kgCO2e/kg waste) อ้างอิง TGO
+    }
+};
+
+document.getElementById('academicCarbonForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+
+    // 1. รับค่าการเดินทาง
+    const dist = parseFloat(document.getElementById('distance').value) || 0;
+    const transType = document.getElementById('transportType').value;
+    const carbonTrans = dist * EMISSION_FACTORS.transport[transType];
+
+    // 2. รับค่าพลังงาน (คำนวณเป็นหน่วยไฟฟ้าก่อน)
+    const acHours = parseFloat(document.getElementById('airConHours').value) || 0;
+    const pcHours = parseFloat(document.getElementById('computerHours').value) || 0;
+    const totalUnits = (acHours * EMISSION_FACTORS.energy.air_con_rate) + (pcHours * EMISSION_FACTORS.energy.laptop_rate);
+    const carbonEnergy = totalUnits * EMISSION_FACTORS.energy.electricity_kwh;
+
+    // 3. รับค่าอาหารและขยะ
+    const dietType = document.getElementById('dietType').value;
+    const wasteW = parseFloat(document.getElementById('wasteWeight').value) || 0;
+    const carbonFood = EMISSION_FACTORS.lifestyle.diet[dietType];
+    const carbonWaste = wasteW * EMISSION_FACTORS.lifestyle.waste;
+
+    // รวมผลลัพธ์
+    const total = carbonTrans + carbonEnergy + carbonFood + carbonWaste;
     
-    // อ้างอิงถึง Element ต่างๆ บนหน้าเว็บ
-    const form = document.getElementById('carbonForm');
-    const resultArea = document.getElementById('resultArea');
-    const totalCarbonSpan = document.getElementById('totalCarbon');
-    const recommendationText = document.getElementById('recommendationText');
+    displayAcademicReport(total, carbonTrans, carbonEnergy, carbonFood, carbonWaste);
+});
 
-    // 1. ฟังก์ชันหลักเมื่อกดปุ่มคำนวณ
-    form.addEventListener('submit', function(e) {
-        // ป้องกันการรีเฟรชหน้า
-        e.preventDefault();
+function displayAcademicReport(total, trans, energy, food, waste) {
+    document.getElementById('resultArea').classList.remove('hidden');
+    document.getElementById('totalCarbon').textContent = total.toFixed(3);
+    document.getElementById('reportDate').textContent = "Generated on: " + new Date().toLocaleString('th-TH');
 
-        // รับค่าจากแบบฟอร์ม
-        const transport = form.transportType.value;
-        const distance = parseFloat(form.distance.value) || 0; // ป้องกันค่าว่าง
-        const meal = form.mealType.value;
+    const breakdownData = [
+        { label: "การเดินทาง (Transportation)", value: trans },
+        { label: "การใช้ไฟฟ้า (Energy)", value: energy },
+        { label: "การบริโภคอาหาร (Diet)", value: food },
+        { label: "ขยะมูลฝอย (Waste)", value: waste }
+    ];
 
-        // เรียกฟังก์ชันคำนวณ
-        const totalCarbon = calculateDailyCarbon(transport, distance, meal);
+    const tableBody = document.getElementById('breakdownTable');
+    tableBody.innerHTML = '';
 
-        // แสดงผล
-        displayResults(totalCarbon);
+    breakdownData.forEach(item => {
+        const percent = ((item.value / total) * 100).toFixed(1);
+        const row = `<tr>
+            <td>${item.label}</td>
+            <td>${item.value.toFixed(3)}</td>
+            <td>${percent}%</td>
+        </tr>`;
+        tableBody.innerHTML += row;
     });
 
-    // 2. ฟังก์ชันคำนวณ (ใช้ค่า Emission Factor อ้างอิงจาก TGO)
-    function calculateDailyCarbon(transport, distance, meal) {
-        let transportCarbon = 0;
-        let mealCarbon = 0;
-
-        // คำนวณคาร์บอนจากการเดินทาง (kgCO2e/km)
-        // [REF]: ข้อมูลจาก TGO
-        switch(transport) {
-            case 'bus':
-                transportCarbon = distance * 0.055; // รถโดยสารสาธารณะ
-                break;
-            case 'motorcycle':
-                transportCarbon = distance * 0.110; // มอเตอร์ไซค์
-                break;
-            case 'car':
-                transportCarbon = distance * 0.190; // รถยนต์
-                break;
-            case 'walk_bike':
-                transportCarbon = distance * 0; // ไม่มีคาร์บอน
-                break;
-        }
-
-        // คำนวณคาร์บอนจากการรับประทานอาหาร (kgCO2e/meal)
-        // [REF]: ค่าเฉลี่ยโดยประมาณ
-        switch(meal) {
-            case 'pork_beef':
-                mealCarbon = 2.80; // เนื้อสัตว์แดง
-                break;
-            case 'chicken_fish':
-                mealCarbon = 1.30; // เนื้อไก่/ปลา
-                break;
-            case 'plant_based':
-                mealCarbon = 0.80; // แพลนต์เบสต์
-                break;
-        }
-
-        // รวมผลลัพธ์
-        return transportCarbon + mealCarbon;
-    }
-
-    // 3. ฟังก์ชันแสดงผลและเปลี่ยนข้อแนะนำ
-    function displayResults(total) {
-        // แสดงผลเลขทศนิยม 2 ตำแหน่ง
-        totalCarbonSpan.textContent = total.toFixed(2);
-
-        // เปลี่ยนคำแนะนำตามผลลัพธ์
-        if (total < 3) {
-            recommendationText.textContent = "ยอดเยี่ยมมาก! วันนี้คุณใช้ชีวิตแบบ 'Low Carbon' สุดๆ รักษาวินัยนี้ไว้ และลองแบ่งปันเรื่องราวนี้ให้เพื่อนๆ ดูนะ";
-        } else if (total < 6) {
-            recommendationText.textContent = "คุณกำลังทำได้ดี! ลองปรับเปลี่ยนเล็กน้อย เช่น ลดระยะทางการใช้วินมอเตอร์ไซค์โดยเปลี่ยนเป็นเดิน หรือปั่นจักรยานดูบ้างครับ";
-        } else {
-            recommendationText.textContent = "วันนี้คาร์บอนฟุตพริ้นท์ของคุณค่อนข้างสูง ลองลดมื้อที่ทานเนื้อแดงลง และเปลี่ยนมาใช้รถสาธารณะแทนรถส่วนตัว หรือมอเตอร์ไซค์ดูนะครับ";
-        }
-
-        // ทำให้การ์ดผลลัพธ์ปรากฏขึ้น
-        resultArea.classList.remove('hidden');
-    }
-
-});
+    // Auto-scroll to result
+    window.scrollTo({ top: document.getElementById('resultArea').offsetTop - 50, behavior: 'smooth' });
+}
