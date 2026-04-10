@@ -1,94 +1,213 @@
 :root {
-    --primary: #1B4242; /* Deep Petrol Green */
+    --primary: #1B4242;
     --secondary: #5C8374;
     --accent: #9EC8B9;
     --bg: #F8FAFC;
     --text-main: #2D3436;
     --border: #E2E8F0;
+    --container-width: 1000px; /* กำหนดความกว้างสูงสุด */
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
 }
 
 body {
     font-family: 'Sarabun', sans-serif;
     background-color: var(--bg);
     color: var(--text-main);
+    line-height: 1.6;
 }
 
-.academic-header {
-    text-align: center;
-    padding: 40px 0;
-    border-bottom: 2px solid var(--border);
-    margin-bottom: 40px;
+/* Container ที่ยืดหยุ่นตามหน้าจอ */
+.container {
+    width: 95%;
+    max-width: var(--container-width);
+    margin: 0 auto;
+    padding: 20px 0;
+}
+
+/* Navbar ปรับให้รองรับจอเล็ก */
+.navbar {
+    background-color: white;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--border);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+}
+
+.nav-content {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.uni-logo {
+    height: 50px;
+    width: auto;
+    object-fit: contain;
+}
+
+.nav-title {
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--primary);
 }
 
 .academic-tag {
-    font-size: 0.75rem;
-    text-transform: uppercase;
-    letter-spacing: 1px;
+    font-size: 0.65rem;
     background: var(--accent);
     padding: 2px 8px;
     border-radius: 4px;
-    font-weight: 600;
+    display: inline-block;
 }
 
+/* Header Section */
+.academic-header {
+    text-align: center;
+    padding: 40px 10px;
+}
+
+.academic-header h2 {
+    font-size: 1.8rem;
+    margin-bottom: 10px;
+}
+
+/* Form Sections */
 .form-section {
     background: white;
-    padding: 30px;
-    border-radius: 12px;
-    margin-bottom: 25px;
-    border: 1px solid var(--border);
+    padding: 25px;
+    border-radius: 16px;
+    margin-bottom: 20px;
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
 }
 
 .section-title {
     font-size: 1.1rem;
-    color: var(--primary);
     margin-bottom: 20px;
-    border-left: 4px solid var(--primary);
-    padding-left: 15px;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
+/* การจัดการ Grid สำหรับคอมพิวเตอร์ */
 .grid-inputs {
     display: grid;
-    grid-template-columns: 1fr 1fr;
+    grid-template-columns: repeat(2, 1fr); /* แบ่ง 2 คอลัมน์ */
     gap: 20px;
 }
 
-/* Table Style */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+label {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--secondary);
+}
+
+input, select {
+    padding: 12px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-family: 'Sarabun', sans-serif;
+    font-size: 1rem;
+    width: 100%;
+}
+
+/* ผลลัพธ์และการคำนวณ */
+.calculate-btn {
+    width: 100%;
+    padding: 16px;
+    background: var(--primary);
+    color: white;
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: transform 0.2s;
+}
+
+.calculate-btn:active {
+    transform: scale(0.98);
+}
+
+.result-card {
+    margin-top: 30px;
+    background: white;
+    padding: 30px;
+    border-radius: 16px;
+    text-align: center;
+}
+
+.circle-viz {
+    width: 180px;
+    height: 180px;
+    margin: 20px auto;
+    border: 10px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Responsive สำหรับมือถือ */
+@media (max-width: 768px) {
+    .nav-content {
+        flex-direction: row;
+        justify-content: flex-start;
+    }
+    
+    .nav-title {
+        font-size: 1rem;
+    }
+
+    .academic-header h2 {
+        font-size: 1.4rem;
+    }
+
+    /* เปลี่ยนจาก 2 คอลัมน์ เป็น 1 คอลัมน์ในมือถือ */
+    .grid-inputs {
+        grid-template-columns: 1fr;
+    }
+
+    .form-section {
+        padding: 20px;
+    }
+
+    /* ปรับตารางให้เลื่อนซ้ายขวาได้ในมือถือ */
+    .data-table-container {
+        overflow-x: auto;
+    }
+
+    .academic-table {
+        min-width: 500px; /* บังคับความกว้างขั้นต่ำของตารางเพื่อให้ข้อมูลไม่เบียด */
+    }
+}
+
+/* ส่วนของตารางข้อมูล */
 .academic-table {
     width: 100%;
     border-collapse: collapse;
     margin-top: 20px;
 }
 
-.academic-table th {
-    text-align: left;
+.academic-table th, .academic-table td {
     padding: 12px;
+    border: 1px solid var(--border);
+    text-align: left;
+}
+
+.academic-table th {
     background: var(--primary);
     color: white;
-}
-
-.academic-table td {
-    padding: 12px;
-    border-bottom: 1px solid var(--border);
-}
-
-.circle-viz {
-    width: 200px;
-    height: 200px;
-    border: 8px solid var(--accent);
-    border-radius: 50%;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    margin: 30px auto;
-}
-
-.circle-viz span {
-    font-size: 2.5rem;
-    font-weight: 700;
-    color: var(--primary);
-}
-
-@media (max-width: 600px) {
-    .grid-inputs { grid-template-columns: 1fr; }
 }
