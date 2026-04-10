@@ -4,101 +4,107 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="Logo bcu.png">
-    <title>Carbon Analytics | Student Research Portal</title>
+    <title>Carbon Dashboard | Academic Research</title>
+    
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Kanit:wght@300;400;500&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <nav class="navbar">
-        <div class="container nav-wrapper">
+    <nav class="top-nav">
+        <div class="wrapper">
             <div class="brand">
-                <img src="Logo bcu.png" alt="University" class="uni-logo">
-                <div class="brand-text">
-                    <strong>CARBON ANALYTICS</strong>
-                    <span>Sustainability Research Unit</span>
+                <img src="Logo bcu.png" alt="University Logo" class="logo">
+                <div class="brand-info">
+                    <span class="uni-name">BENGCHANH UNIVERSITY RESEARCH</span>
+                    <span class="project-tag">Climate Action Unit</span>
                 </div>
             </div>
         </div>
     </nav>
 
-    <main class="container">
-        <header class="page-header">
-            <h1>Carbon Footprint Assessment</h1>
-            <p>เครื่องมือวิเคราะห์ผลกระทบทางสิ่งแวดล้อมรายบุคคล อ้างอิงเกณฑ์มาตรฐานความยั่งยืนระดับสากล</p>
+    <main class="wrapper main-content">
+        <header class="header">
+            <h1>Carbon Tracker <span class="v2">v2.0</span></h1>
+            <p>ประเมินผลกระทบต่อสิ่งแวดล้อมรายบุคคล ตามมาตรฐานความยั่งยืนสากล</p>
         </header>
 
-        <div class="main-grid">
-            <form id="carbonCalculator" class="input-panel">
-                <div class="section">
-                    <h3 class="section-label">01 การคมนาคม</h3>
-                    <div class="field-group">
-                        <label>ประเภทพาหนะที่ใช้</label>
-                        <select id="transportType">
-                            <option value="none">เดิน / ปั่นจักรยาน (Zero Emission)</option>
-                            <option value="bus">รถโดยสารสาธารณะ</option>
-                            <option value="bts_mrt">รถไฟฟ้า (BTS/MRT)</option>
-                            <option value="motorcycle">รถจักรยานยนต์</option>
-                            <option value="sedan">รถยนต์ส่วนบุคคล</option>
-                        </select>
+        <div class="dashboard-grid">
+            <aside class="input-card">
+                <form id="carbonForm">
+                    <div class="input-section">
+                        <label class="section-title">01 การเดินทาง</label>
+                        <div class="field">
+                            <label>รูปแบบพาหนะ</label>
+                            <select id="transport">
+                                <option value="none">เดิน / จักรยาน (0.0)</option>
+                                <option value="bus">รถโดยสารสาธารณะ</option>
+                                <option value="mrt">รถไฟฟ้า MRT/BTS</option>
+                                <option value="motor">รถจักรยานยนต์</option>
+                                <option value="car">รถยนต์ส่วนตัว</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label>ระยะทางรวม (กม./วัน)</label>
+                            <input type="number" id="distance" placeholder="0.0" step="0.1">
+                        </div>
                     </div>
-                    <div class="field-group">
-                        <label>ระยะทางรวม (กม./วัน)</label>
-                        <input type="number" id="distance" placeholder="0.0" step="0.1">
+
+                    <div class="input-section">
+                        <label class="section-title">02 พลังงาน</label>
+                        <div class="field">
+                            <label>เปิดแอร์ (ชั่วโมง/วัน)</label>
+                            <input type="number" id="ac" placeholder="0">
+                        </div>
                     </div>
+
+                    <div class="input-section">
+                        <label class="section-title">03 อาหาร</label>
+                        <div class="field">
+                            <label>ประเภทการรับประทาน</label>
+                            <select id="food">
+                                <option value="vegan">มังสวิรัติ (Low)</option>
+                                <option value="normal">ทั่วไป (Normal)</option>
+                                <option value="meat">เน้นเนื้อสัตว์ (High)</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <button type="submit" class="btn-calculate">วิเคราะห์ข้อมูล</button>
+                </form>
+            </aside>
+
+            <section id="results" class="result-card hidden">
+                <div id="statusIndicator" class="status-bar">
+                    <span id="statusText">วิเคราะห์สำเร็จ</span>
                 </div>
 
-                <div class="section">
-                    <h3 class="section-label">02 พลังงานและการพักอาศัย</h3>
-                    <div class="field-group">
-                        <label>การเปิดเครื่องปรับอากาศ (ชั่วโมง)</label>
-                        <input type="number" id="acHours" placeholder="0">
-                    </div>
+                <div class="value-box">
+                    <h2 id="finalScore">0.00</h2>
+                    <p>kgCO₂e / วัน</p>
                 </div>
 
-                <div class="section">
-                    <h3 class="section-label">03 การบริโภค</h3>
-                    <div class="field-group">
-                        <label>ลักษณะการบริโภคอาหาร</label>
-                        <select id="dietType">
-                            <option value="low">เน้นพืชผัก (Low Impact)</option>
-                            <option value="med">ทานเนื้อสัตว์ทั่วไป (Standard)</option>
-                            <option value="high">เน้นเนื้อแดง/บุฟเฟต์ (High Impact)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <button type="submit" class="btn-primary">วิเคราะห์ผลลัพธ์</button>
-            </form>
-
-            <div id="resultPanel" class="result-panel hidden">
-                <div class="status-indicator" id="statusBox">
-                    <span id="statusLabel">Good Condition</span>
-                    <p id="statusDesc">ปริมาณคาร์บอนของคุณอยู่ในเกณฑ์มาตรฐาน</p>
-                </div>
-
-                <div class="value-display">
-                    <h2 id="totalValue">0.00</h2>
-                    <span>kgCO₂e / วัน</span>
-                </div>
-
-                <div class="benchmark-box">
-                    <div class="progress-bar">
-                        <div id="progressFill" class="fill"></div>
-                    </div>
-                    <div class="progress-labels">
-                        <span>0 kg</span>
-                        <span>เป้าหมาย (5 kg/วัน)</span>
+                <div class="analysis-box">
+                    <h3>บทวิเคราะห์รายวัน</h3>
+                    <div id="summaryText" class="summary-p">
+                        ข้อมูลของคุณกำลังถูกประมวลผลเทียบกับค่าเฉลี่ยเป้าหมาย 5.0 kgCO₂e...
                     </div>
                 </div>
 
-                <div class="analysis-list">
-                    <h4>บทวิเคราะห์รายด้าน</h4>
-                    <ul id="analysisItems"></ul>
+                <div class="comparison">
+                    <div class="comp-item">
+                        <span>ของคุณ</span>
+                        <div class="bar-bg"><div id="userBar" class="bar-fill"></div></div>
+                    </div>
+                    <div class="comp-item">
+                        <span>เป้าหมายโลก</span>
+                        <div class="bar-bg"><div class="bar-fill goal" style="width: 35%"></div></div>
+                    </div>
                 </div>
-            </div>
+            </section>
         </div>
     </main>
 
