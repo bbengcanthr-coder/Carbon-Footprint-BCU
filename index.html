@@ -3,15 +3,11 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    
     <link rel="icon" type="image/png" href="Logo bcu.png">
-    
-    <title>Student Carbon Tracker | มหาวิทยาลัยเบงจันทร์</title>
-    
+    <title>Academic Carbon Footprint Calculator | University Research</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
-    
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
@@ -19,65 +15,109 @@
     <nav class="navbar">
         <div class="container nav-content">
             <img src="Logo bcu.png" alt="University Logo" class="uni-logo">
-            <h1 class="nav-title">Student Carbon Tracker</h1>
+            <div class="nav-text">
+                <h1 class="nav-title">Carbon Footprint Assessment Tool</h1>
+                <span class="academic-tag">Research & Development Platform</span>
+            </div>
         </div>
     </nav>
 
     <main class="container">
-        <section class="hero-section">
-            <h2>ประเมินคาร์บอนฟุตพริ้นท์ของคุณ</h2>
-            <p class="hero-subtext">บันทึกกิจกรรมในวันนี้เพื่อร่วมสร้างมหาวิทยาลัยที่เป็นมิตรต่อสิ่งแวดล้อม</p>
-        </section>
+        <header class="academic-header">
+            <h2>เครื่องมือประเมินปริมาณการปล่อยก๊าซเรือนกระจกรายบุคคล</h2>
+            <p>อ้างอิงค่าสัมประสิทธิ์การปล่อยก๊าซเรือนกระจก (Emission Factor) ตามมาตรฐาน TGO และ IPCC</p>
+        </header>
 
-        <section class="calculator-card">
-            <form id="carbonForm">
-                <div class="form-group">
-                    <label for="transportType">🚗 เลือกวิธีการเดินทางหลักวันนี้</label>
-                    <select id="transportType" name="transportType" required>
-                        <option value="" disabled selected>เลือกวิธีการเดินทาง...</option>
-                        <option value="bus">รถเมล์ / รถสาธารณะ</option>
-                        <option value="motorcycle">มอเตอร์ไซค์</option>
-                        <option value="car">รถยนต์ส่วนตัว</option>
-                        <option value="walk_bike">เดิน หรือ ปั่นจักรยาน</option>
-                    </select>
+        <form id="academicCarbonForm">
+            <div class="form-section">
+                <h3 class="section-title"><i class="icon">🚲</i> 1. การคมนาคมและการขนส่ง (Transportation)</h3>
+                <div class="grid-inputs">
+                    <div class="form-group">
+                        <label>ประเภทพาหนะ</label>
+                        <select id="transportType">
+                            <option value="none">ไม่เดินทาง / เดิน</option>
+                            <option value="sedan">รถยนต์ส่วนตัว (เบนซิน)</option>
+                            <option value="diesel">รถยนต์ส่วนตัว (ดีเซล)</option>
+                            <option value="ev">รถยนต์ไฟฟ้า (EV)</option>
+                            <option value="motorcycle">รถจักรยานยนต์</option>
+                            <option value="public_bus">รถโดยสารสาธารณะ</option>
+                            <option value="bts_mrt">รถไฟฟ้า (BTS/MRT)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ระยะทาง (กิโลเมตร/วัน)</label>
+                        <input type="number" id="distance" placeholder="0.00" step="0.1">
+                    </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="distance">📍 ระยะทางโดยประมาณ (กิโลเมตร)</label>
-                    <input type="number" id="distance" name="distance" placeholder="เช่น 5" min="0" required>
+            <div class="form-section">
+                <h3 class="section-title"><i class="icon">⚡</i> 2. การใช้พลังงานในที่พักอาศัย (Energy)</h3>
+                <div class="grid-inputs">
+                    <div class="form-group">
+                        <label>ชั่วโมงการเปิดเครื่องปรับอากาศ</label>
+                        <input type="number" id="airConHours" placeholder="ชั่วโมง/วัน">
+                    </div>
+                    <div class="form-group">
+                        <label>ชั่วโมงการใช้งานคอมพิวเตอร์/โน้ตบุ๊ก</label>
+                        <input type="number" id="computerHours" placeholder="ชั่วโมง/วัน">
+                    </div>
                 </div>
+            </div>
 
-                <div class="form-group">
-                    <label for="mealType">🍽️ อาหารมื้อหลัก (มื้อที่มีปริมาณมากที่สุด)</label>
-                    <select id="mealType" name="mealType" required>
-                        <option value="" disabled selected>เลือกประเภทอาหาร...</option>
-                        <option value="pork_beef">เนื้อสัตว์ (หมู/เนื้อ)</option>
-                        <option value="chicken_fish">เนื้อสัตว์ (ไก่/ปลา)</option>
-                        <option value="plant_based">อาหารแพลนต์เบสต์ / มังสวิรัติ</option>
-                    </select>
+            <div class="form-section">
+                <h3 class="section-title"><i class="icon">🍲</i> 3. บริโภคและการจัดการขยะ (Food & Waste)</h3>
+                <div class="grid-inputs">
+                    <div class="form-group">
+                        <label>การบริโภคเนื้อสัตว์ต่อวัน</label>
+                        <select id="dietType">
+                            <option value="vegan">มังสวิรัติ (Vegetarian/Vegan)</option>
+                            <option value="balanced">ทั่วไป (ผสมเนื้อสัตว์และผัก)</option>
+                            <option value="meat_heavy">เน้นเนื้อสัตว์เป็นหลัก (High Meat)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>ปริมาณขยะมูลฝอย (กิโลกรัม/วัน)</label>
+                        <input type="number" id="wasteWeight" placeholder="เช่น 0.5" step="0.1">
+                    </div>
                 </div>
+            </div>
 
-                <button type="submit" class="calculate-btn">คำนวณผลลัพธ์</button>
-            </form>
-        </section>
+            <button type="submit" class="calculate-btn">ประมวลผลตามมาตรฐานวิชาการ</button>
+        </form>
 
         <section id="resultArea" class="result-card hidden">
-            <h3>ผลลัพธ์คาร์บอนฟุตพริ้นท์ของคุณวันนี้</h3>
-            <div class="result-value">
-                <span id="totalCarbon">0.00</span>
-                <span class="unit">kgCO₂e</span>
+            <div class="result-header">
+                <h3>รายงานสรุปผลการประเมิน</h3>
+                <p id="reportDate"></p>
             </div>
             
-            <div class="recommendation">
-                <h4>🌱 ข้อแนะนำของคุณ:</h4>
-                <p id="recommendationText">คุณกำลังทำได้ดีมาก! ลองลดการใช้พลาสติกแบบใช้ครั้งเดียวทิ้งเพิ่มเติมดูนะครับ</p>
+            <div class="main-result">
+                <div class="circle-viz">
+                    <span id="totalCarbon">0.00</span>
+                    <small>kgCO₂e / Day</small>
+                </div>
+            </div>
+
+            <div class="data-table-container">
+                <table class="academic-table">
+                    <thead>
+                        <tr>
+                            <th>หมวดหมู่</th>
+                            <th>การปล่อย (kgCO₂e)</th>
+                            <th>สัดส่วน (%)</th>
+                        </tr>
+                    </thead>
+                    <tbody id="breakdownTable">
+                        </tbody>
+                </table>
             </div>
         </section>
-
     </main>
 
-    <footer class="footer">
-        <p>&copy; มหาวิทยาลัยเบงจันทร์ - พัฒนาโดยกลุ่มนักศึกษา</p>
+    <footer class="footer academic-footer">
+        <p>หน่วยวิจัยความยั่งยืน | คณะวิศวกรรมศาสตร์ มหาวิทยาลัยเบงจันทร์</p>
+        <p><small>Data Source: Thailand Greenhouse Gas Management Organization (BENGCHANH UNIVERSITY)</small></p>
     </footer>
 
     <script src="script.js"></script>
