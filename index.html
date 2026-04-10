@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <link rel="icon" type="image/png" href="Logo bcu.png">
+    
+    <title>Student Carbon Tracker | มหาวิทยาลัยของคุณ</title>
+    
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <nav class="navbar">
+        <div class="container nav-content">
+            <img src="Logo bcu.png" alt="University Logo" class="uni-logo">
+            <h1 class="nav-title">Student Carbon Tracker</h1>
+        </div>
+    </nav>
+
+    <main class="container">
+        <section class="hero-section">
+            <h2>ประเมินคาร์บอนฟุตพริ้นท์ของคุณ</h2>
+            <p class="hero-subtext">บันทึกกิจกรรมในวันนี้เพื่อร่วมสร้างมหาวิทยาลัยที่เป็นมิตรต่อสิ่งแวดล้อม</p>
+        </section>
+
+        <section class="calculator-card">
+            <form id="carbonForm">
+                <div class="form-group">
+                    <label for="transportType">🚗 เลือกวิธีการเดินทางหลักวันนี้</label>
+                    <select id="transportType" name="transportType" required>
+                        <option value="" disabled selected>เลือกวิธีการเดินทาง...</option>
+                        <option value="bus">รถเมล์ / รถสาธารณะ</option>
+                        <option value="motorcycle">มอเตอร์ไซค์</option>
+                        <option value="car">รถยนต์ส่วนตัว</option>
+                        <option value="walk_bike">เดิน หรือ ปั่นจักรยาน</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label for="distance">📍 ระยะทางโดยประมาณ (กิโลเมตร)</label>
+                    <input type="number" id="distance" name="distance" placeholder="เช่น 5" min="0" required>
+                </div>
+
+                <div class="form-group">
+                    <label for="mealType">🍽️ อาหารมื้อหลัก (มื้อที่มีปริมาณมากที่สุด)</label>
+                    <select id="mealType" name="mealType" required>
+                        <option value="" disabled selected>เลือกประเภทอาหาร...</option>
+                        <option value="pork_beef">เนื้อสัตว์ (หมู/เนื้อแดง)</option>
+                        <option value="chicken_fish">เนื้อสัตว์ (ไก่/ปลา)</option>
+                        <option value="plant_based">อาหารแพลนต์เบสต์ / มังสวิรัติ</option>
+                    </select>
+                </div>
+
+                <button type="submit" class="calculate-btn">คำนวณผลลัพธ์</button>
+            </form>
+        </section>
+
+        <section id="resultArea" class="result-card hidden">
+            <h3>ผลลัพธ์คาร์บอนฟุตพริ้นท์ของคุณวันนี้</h3>
+            <div class="result-value">
+                <span id="totalCarbon">0.00</span>
+                <span class="unit">kgCO₂e</span>
+            </div>
+            
+            <div class="recommendation">
+                <h4>🌱 ข้อแนะนำของคุณ:</h4>
+                <p id="recommendationText">คุณกำลังทำได้ดีมาก! ลองลดการใช้พลาสติกแบบใช้ครั้งเดียวทิ้งเพิ่มเติมดูนะครับ</p>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <p>&copy; 2024 มหาวิทยาลัยของคุณ - พัฒนาโดยกลุ่มนักศึกษา</p>
+    </footer>
+
+    <script src="script.js"></script>
+</body>
+</html>
