@@ -1,189 +1,94 @@
-/* --- กฎพื้นฐานและการจัดระยะ (แบบเขียนมือ ไม่ใช้ Framework) --- */
 :root {
-    --primary-green: #3D8361;    /* สีเขียวเข้ม เรียบหรู */
-    --accent-green: #D6E8DB;     /* สีเขียวอ่อน นุ่มนวล */
-    --background-gray: #FAFAFA; /* พื้นหลังขาวนวล */
-    --text-dark: #333333;        /* สีตัวอักษรเกือบดำ */
-    --text-muted: #666666;       /* สีตัวอักษรสีเทา */
-    --card-shadow: 0 4px 15px rgba(0,0,0,0.08); /* เงาบางๆ */
-    --transition-speed: 0.3s;    /* ความเร็วเอฟเฟกต์ */
-}
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+    --primary: #1B4242; /* Deep Petrol Green */
+    --secondary: #5C8374;
+    --accent: #9EC8B9;
+    --bg: #F8FAFC;
+    --text-main: #2D3436;
+    --border: #E2E8F0;
 }
 
 body {
-    font-family: 'Sarabun', sans-serif; /* ฟอนต์ไม่มีหัว */
-    font-size: 16px;
-    line-height: 1.6;
-    background-color: var(--background-gray);
-    color: var(--text-dark);
+    font-family: 'Sarabun', sans-serif;
+    background-color: var(--bg);
+    color: var(--text-main);
 }
 
-.container {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-/* --- ส่วน Navbar --- */
-.navbar {
-    background-color: white;
-    padding: 15px 0;
-    box-shadow: 0 2px 5px rgba(0,0,0,0.03);
-    position: sticky;
-    top: 0;
-    z-index: 100;
-}
-
-.nav-content {
-    display: flex;
-    align-items: center;
-}
-
-.uni-logo {
-    height: 45px;
-    margin-right: 15px;
-}
-
-.nav-title {
-    font-weight: 600;
-    font-size: 1.3rem;
-    color: var(--primary-green);
-}
-
-/* --- ส่วน Hero (ส่วนหัวข้อ) --- */
-.hero-section {
-    padding: 60px 0;
+.academic-header {
     text-align: center;
-}
-
-.hero-section h2 {
-    font-size: 2.2rem;
-    font-weight: 600;
-    margin-bottom: 15px;
-}
-
-.hero-subtext {
-    font-size: 1.1rem;
-    color: var(--text-muted);
-}
-
-/* --- ส่วนการ์ดคำนวณ (ให้ดูแพง) --- */
-.calculator-card, .result-card {
-    background-color: white;
-    border-radius: 12px;
-    padding: 40px;
-    box-shadow: var(--card-shadow);
+    padding: 40px 0;
+    border-bottom: 2px solid var(--border);
     margin-bottom: 40px;
 }
 
-.form-group {
+.academic-tag {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    background: var(--accent);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-weight: 600;
+}
+
+.form-section {
+    background: white;
+    padding: 30px;
+    border-radius: 12px;
     margin-bottom: 25px;
+    border: 1px solid var(--border);
 }
 
-label {
-    display: block;
-    font-size: 0.95rem;
-    font-weight: 500;
-    margin-bottom: 8px;
-    color: #555;
-}
-
-/* อินพุตและซีเลคเตอร์ */
-input[type="number"], select {
-    width: 100%;
-    padding: 12px 18px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 1rem;
-    border: 1px solid #E0E0E0;
-    border-radius: 8px;
-    background-color: white;
-    transition: all var(--transition-speed);
-}
-
-input[type="number"]:focus, select:focus {
-    outline: none;
-    border-color: var(--primary-green);
-    box-shadow: 0 0 0 3px rgba(61, 131, 97, 0.1);
-}
-
-/* ปุ่มคำนวณ (แบบเรียบๆ แต่ดูเด่น) */
-.calculate-btn {
-    width: 100%;
-    padding: 14px 20px;
-    font-family: 'Sarabun', sans-serif;
-    font-size: 1.05rem;
-    font-weight: 600;
-    color: white;
-    background-color: var(--primary-green);
-    border: none;
-    border-radius: 8px;
-    cursor: pointer;
-    transition: background-color var(--transition-speed);
-}
-
-.calculate-btn:hover {
-    background-color: #347153; /* เข้มขึ้นเล็กน้อยเวลาชี้ */
-}
-
-/* --- ส่วนแสดงผล --- */
-.result-card {
-    text-align: center;
-    border-top: 5px solid var(--primary-green);
-}
-
-.hidden {
-    display: none;
-}
-
-.result-card h3 {
-    font-weight: 500;
-    font-size: 1.2rem;
-    color: var(--text-muted);
+.section-title {
+    font-size: 1.1rem;
+    color: var(--primary);
     margin-bottom: 20px;
+    border-left: 4px solid var(--primary);
+    padding-left: 15px;
 }
 
-.result-value {
-    font-size: 3.5rem;
-    font-weight: 600;
-    color: var(--primary-green);
-    margin-bottom: 20px;
+.grid-inputs {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
 }
 
-.result-value .unit {
-    font-size: 1.2rem;
-    font-weight: 400;
-    color: var(--text-muted);
+/* Table Style */
+.academic-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
 }
 
-.recommendation {
-    background-color: var(--accent-green);
-    border-radius: 8px;
-    padding: 20px;
+.academic-table th {
     text-align: left;
+    padding: 12px;
+    background: var(--primary);
+    color: white;
 }
 
-.recommendation h4 {
-    margin-bottom: 8px;
-    font-weight: 600;
+.academic-table td {
+    padding: 12px;
+    border-bottom: 1px solid var(--border);
 }
 
-/* --- ส่วน Footer --- */
-.footer {
-    padding: 30px 0;
-    text-align: center;
-    font-size: 0.9rem;
-    color: var(--text-muted);
-    border-top: 1px solid #EEE;
+.circle-viz {
+    width: 200px;
+    height: 200px;
+    border: 8px solid var(--accent);
+    border-radius: 50%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: 30px auto;
 }
 
-/* --- ทำให้รองรับหน้าจอมือถือ --- */
-@media (max-width: 768px) {
-    .hero-section h2 { font-size: 1.8rem; }
-    .nav-title { font-size: 1.1rem; }
-    .calculator-card { padding: 25px; }
+.circle-viz span {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: var(--primary);
+}
+
+@media (max-width: 600px) {
+    .grid-inputs { grid-template-columns: 1fr; }
 }
