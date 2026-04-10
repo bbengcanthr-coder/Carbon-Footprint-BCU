@@ -1,69 +1,60 @@
-document.getElementById('carbonCalculator').addEventListener('submit', function(e) {
+document.getElementById('carbonForm').addEventListener('submit', function(e) {
     e.preventDefault();
 
-    // 1. รับค่าและคำนวณ (อ้างอิงค่าจริง)
-    const dist = parseFloat(document.getElementById('distance').value) || 0;
-    const transType = document.getElementById('transportType').value;
-    const acHours = parseFloat(document.getElementById('acHours').value) || 0;
-    const diet = document.getElementById('dietType').value;
-
-    // Emission Factors (kgCO2e)
-    const factors = {
-        bus: 0.06, bts_mrt: 0.04, motorcycle: 0.1, sedan: 0.2, none: 0,
-        ac: 0.6, // ต่อชั่วโมง (แอร์ประหยัดไฟเบอร์ 5)
-        diet_low: 1.5, diet_med: 3.5, diet_high: 6.5
+    // ข้อมูล Emission Factors (อ้างอิง TGO/IPCC)
+    const factor = {
+        trans: { none: 0, bus: 0.05, mrt: 0.03, motor: 0.1, car: 0.22 },
+        ac: 0.65, // ต่อชั่วโมง
+        food: { vegan: 1.2, normal: 3.0, meat: 6.5 }
     };
 
-    const cTrans = dist * factors[transType];
-    const cEnergy = acHours * factors.ac;
-    const cFood = factors[`diet_${diet}`];
-    
-    const total = cTrans + cEnergy + cFood;
+    const d = parseFloat(document.getElementById('distance').value) || 0;
+    const t = document.getElementById('transport').value;
+    const ac = parseFloat(document.getElementById('ac').value) || 0;
+    const f = document.getElementById('food').value;
 
-    updateUI(total, cTrans, cEnergy, cFood);
+    const total = (d * factor.trans[t]) + (ac * factor.ac) + factor.food[f];
+
+    renderResults(total);
 });
 
-function updateUI(total, trans, energy, food) {
-    const panel = document.getElementById('resultPanel');
-    const statusBox = document.getElementById('statusBox');
-    const fill = document.getElementById('progressFill');
-    
-    panel.classList.remove('hidden');
-    document.getElementById('totalValue').textContent = total.toFixed(2);
+function renderResults(val) {
+    const res = document.getElementById('results');
+    const bar = document.getElementById('userBar');
+    const status = document.getElementById('statusIndicator');
+    const statusTxt = document.getElementById('statusText');
+    const summary = document.getElementById('summaryText');
 
-    // 2. ตรวจสอบเกณฑ์ความเป็นจริง (Thresholds)
-    // เกณฑ์: น้อยกว่า 5 = ดีมาก, 5-10 = เริ่มสูง, 10 ขึ้นไป = อันตรายต่อโลก
-    let status = "";
-    let desc = "";
-    let colorClass = "";
-    let progressWidth = (total / 15) * 100; // เทียบสเกลสูงสุดที่ 15kg
+    res.classList.remove('hidden');
+    document.getElementById('finalScore').textContent = val.toFixed(2);
 
-    if (total <= 5) {
-        status = "🌿 ระดับความยั่งยืนสูง (Optimal)";
-        desc = "พฤติกรรมของคุณช่วยรักษาอุณหภูมิโลกไม่ให้เกิน 1.5°C";
-        colorClass = "status-good";
-    } else if (total <= 10) {
-        status = "⚠️ เริ่มส่งผลกระทบ (Moderate)";
-        desc = "ปริมาณคาร์บอนของคุณสูงกว่าเกณฑ์เฉลี่ยเพื่อความยั่งยืน";
-        colorClass = "status-warning";
+    // กำหนดเกณฑ์ (Thresholds)
+    let color = "";
+    let msg = "";
+
+    if (val <= 5) {
+        color = "status-success";
+        msg = "🌿 ระดับดีเยี่ยม (Eco-Friendly)";
+        summary.textContent = "พฤติกรรมของคุณสอดคล้องกับเป้าหมายการจำกัดอุณหภูมิโลกไม่ให้เกิน 1.5 องศาเซลเซียส คุณคือกลุ่มผู้ใช้งานที่มีความรับผิดชอบต่อสิ่งแวดล้อมสูงมาก";
+        bar.style.backgroundColor = "#10B981";
+    } else if (val <= 12) {
+        color = "status-warn";
+        msg = "⚠️ ระดับปานกลาง (Average)";
+        summary.textContent = "คุณมีการปล่อยคาร์บอนอยู่ในเกณฑ์เฉลี่ย แต่ยังสามารถปรับลดได้ โดยเฉพาะการเลือกใช้ระบบขนส่งสาธารณะแทนรถส่วนตัว หรือลดมื้อเนื้อแดงลง";
+        bar.style.backgroundColor = "#F59E0B";
     } else {
-        status = "🚨 สูงเกินขีดจำกัด (Critical)";
-        desc = "หากทุกคนทำแบบคุณ เราจะต้องใช้โลกถึง 3 ใบเพื่อรองรับทรัพยากร";
-        colorClass = "status-danger";
+        color = "status-danger";
+        msg = "🚨 ระดับสูง (High Impact)";
+        summary.textContent = "ค่าคาร์บอนฟุตพริ้นท์ของคุณสูงกว่าเกณฑ์ที่แนะนำอย่างมาก หากทุกคนมีพฤติกรรมเช่นนี้ โลกจะเข้าสู่ภาวะวิกฤตเร็วกว่าที่คาดการณ์ไว้";
+        bar.style.backgroundColor = "#EF4444";
     }
 
-    statusBox.className = `status-indicator ${colorClass}`;
-    document.getElementById('statusLabel').textContent = status;
-    document.getElementById('statusDesc').textContent = desc;
-    fill.style.width = `${Math.min(progressWidth, 100)}%`;
+    status.className = `status-bar ${color}`;
+    statusTxt.textContent = msg;
 
-    // อัปเดตบทวิเคราะห์
-    const list = document.getElementById('analysisItems');
-    list.innerHTML = `
-        <li style="font-size: 0.9rem; margin-top: 10px;">🚗 การเดินทาง: ${trans.toFixed(2)} kg</li>
-        <li style="font-size: 0.9rem;">⚡ พลังงาน: ${energy.toFixed(2)} kg</li>
-        <li style="font-size: 0.9rem;">🍔 การบริโภค: ${food.toFixed(2)} kg</li>
-    `;
+    // คำนวณความยาว Bar (เทียบกับ Max 20kg)
+    const percent = Math.min((val / 20) * 100, 100);
+    setTimeout(() => { bar.style.width = percent + "%"; }, 100);
 
-    window.scrollTo({ top: panel.offsetTop - 100, behavior: 'smooth' });
+    window.scrollTo({ top: res.offsetTop - 50, behavior: 'smooth' });
 }
