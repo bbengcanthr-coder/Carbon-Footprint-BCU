@@ -4,121 +4,103 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="Logo bcu.png">
-    <title>Academic Carbon Footprint Calculator | University Research</title>
+    <title>Carbon Analytics | Student Research Portal</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600&family=Inter:wght@400;600&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
     <nav class="navbar">
-        <div class="container nav-content">
-            <img src="Logo bcu.png" alt="University Logo" class="uni-logo">
-            <div class="nav-text">
-                <h1 class="nav-title">Carbon Footprint Assessment Tool</h1>
-                <span class="academic-tag">Research & Development Platform</span>
+        <div class="container nav-wrapper">
+            <div class="brand">
+                <img src="Logo bcu.png" alt="University" class="uni-logo">
+                <div class="brand-text">
+                    <strong>CARBON ANALYTICS</strong>
+                    <span>Sustainability Research Unit</span>
+                </div>
             </div>
         </div>
     </nav>
 
     <main class="container">
-        <header class="academic-header">
-            <h2>เครื่องมือประเมินปริมาณการปล่อยก๊าซเรือนกระจกรายบุคคล</h2>
-            <p>อ้างอิงค่าสัมประสิทธิ์การปล่อยก๊าซเรือนกระจก (Emission Factor) ตามมาตรฐาน TGO และ IPCC</p>
+        <header class="page-header">
+            <h1>Carbon Footprint Assessment</h1>
+            <p>เครื่องมือวิเคราะห์ผลกระทบทางสิ่งแวดล้อมรายบุคคล อ้างอิงเกณฑ์มาตรฐานความยั่งยืนระดับสากล</p>
         </header>
 
-        <form id="academicCarbonForm">
-            <div class="form-section">
-                <h3 class="section-title"><i class="icon">🚲</i> 1. การคมนาคมและการขนส่ง (Transportation)</h3>
-                <div class="grid-inputs">
-                    <div class="form-group">
-                        <label>ประเภทพาหนะ</label>
+        <div class="main-grid">
+            <form id="carbonCalculator" class="input-panel">
+                <div class="section">
+                    <h3 class="section-label">01 การคมนาคม</h3>
+                    <div class="field-group">
+                        <label>ประเภทพาหนะที่ใช้</label>
                         <select id="transportType">
-                            <option value="none">ไม่เดินทาง / เดิน</option>
-                            <option value="sedan">รถยนต์ส่วนตัว (เบนซิน)</option>
-                            <option value="diesel">รถยนต์ส่วนตัว (ดีเซล)</option>
-                            <option value="ev">รถยนต์ไฟฟ้า (EV)</option>
-                            <option value="motorcycle">รถจักรยานยนต์</option>
-                            <option value="public_bus">รถโดยสารสาธารณะ</option>
+                            <option value="none">เดิน / ปั่นจักรยาน (Zero Emission)</option>
+                            <option value="bus">รถโดยสารสาธารณะ</option>
                             <option value="bts_mrt">รถไฟฟ้า (BTS/MRT)</option>
+                            <option value="motorcycle">รถจักรยานยนต์</option>
+                            <option value="sedan">รถยนต์ส่วนบุคคล</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>ระยะทาง (กิโลเมตร/วัน)</label>
-                        <input type="number" id="distance" placeholder="0.00" step="0.1">
+                    <div class="field-group">
+                        <label>ระยะทางรวม (กม./วัน)</label>
+                        <input type="number" id="distance" placeholder="0.0" step="0.1">
                     </div>
                 </div>
-            </div>
 
-            <div class="form-section">
-                <h3 class="section-title"><i class="icon">⚡</i> 2. การใช้พลังงานในที่พักอาศัย (Energy)</h3>
-                <div class="grid-inputs">
-                    <div class="form-group">
-                        <label>ชั่วโมงการเปิดเครื่องปรับอากาศ</label>
-                        <input type="number" id="airConHours" placeholder="ชั่วโมง/วัน">
-                    </div>
-                    <div class="form-group">
-                        <label>ชั่วโมงการใช้งานคอมพิวเตอร์/โน้ตบุ๊ก</label>
-                        <input type="number" id="computerHours" placeholder="ชั่วโมง/วัน">
+                <div class="section">
+                    <h3 class="section-label">02 พลังงานและการพักอาศัย</h3>
+                    <div class="field-group">
+                        <label>การเปิดเครื่องปรับอากาศ (ชั่วโมง)</label>
+                        <input type="number" id="acHours" placeholder="0">
                     </div>
                 </div>
-            </div>
 
-            <div class="form-section">
-                <h3 class="section-title"><i class="icon">🍲</i> 3. บริโภคและการจัดการขยะ (Food & Waste)</h3>
-                <div class="grid-inputs">
-                    <div class="form-group">
-                        <label>การบริโภคเนื้อสัตว์ต่อวัน</label>
+                <div class="section">
+                    <h3 class="section-label">03 การบริโภค</h3>
+                    <div class="field-group">
+                        <label>ลักษณะการบริโภคอาหาร</label>
                         <select id="dietType">
-                            <option value="vegan">มังสวิรัติ (Vegetarian/Vegan)</option>
-                            <option value="balanced">ทั่วไป (ผสมเนื้อสัตว์และผัก)</option>
-                            <option value="meat_heavy">เน้นเนื้อสัตว์เป็นหลัก (High Meat)</option>
+                            <option value="low">เน้นพืชผัก (Low Impact)</option>
+                            <option value="med">ทานเนื้อสัตว์ทั่วไป (Standard)</option>
+                            <option value="high">เน้นเนื้อแดง/บุฟเฟต์ (High Impact)</option>
                         </select>
                     </div>
-                    <div class="form-group">
-                        <label>ปริมาณขยะมูลฝอย (กิโลกรัม/วัน)</label>
-                        <input type="number" id="wasteWeight" placeholder="เช่น 0.5" step="0.1">
+                </div>
+
+                <button type="submit" class="btn-primary">วิเคราะห์ผลลัพธ์</button>
+            </form>
+
+            <div id="resultPanel" class="result-panel hidden">
+                <div class="status-indicator" id="statusBox">
+                    <span id="statusLabel">Good Condition</span>
+                    <p id="statusDesc">ปริมาณคาร์บอนของคุณอยู่ในเกณฑ์มาตรฐาน</p>
+                </div>
+
+                <div class="value-display">
+                    <h2 id="totalValue">0.00</h2>
+                    <span>kgCO₂e / วัน</span>
+                </div>
+
+                <div class="benchmark-box">
+                    <div class="progress-bar">
+                        <div id="progressFill" class="fill"></div>
+                    </div>
+                    <div class="progress-labels">
+                        <span>0 kg</span>
+                        <span>เป้าหมาย (5 kg/วัน)</span>
                     </div>
                 </div>
-            </div>
 
-            <button type="submit" class="calculate-btn">ประมวลผลตามมาตรฐานวิชาการ</button>
-        </form>
-
-        <section id="resultArea" class="result-card hidden">
-            <div class="result-header">
-                <h3>รายงานสรุปผลการประเมิน</h3>
-                <p id="reportDate"></p>
-            </div>
-            
-            <div class="main-result">
-                <div class="circle-viz">
-                    <span id="totalCarbon">0.00</span>
-                    <small>kgCO₂e / Day</small>
+                <div class="analysis-list">
+                    <h4>บทวิเคราะห์รายด้าน</h4>
+                    <ul id="analysisItems"></ul>
                 </div>
             </div>
-
-            <div class="data-table-container">
-                <table class="academic-table">
-                    <thead>
-                        <tr>
-                            <th>หมวดหมู่</th>
-                            <th>การปล่อย (kgCO₂e)</th>
-                            <th>สัดส่วน (%)</th>
-                        </tr>
-                    </thead>
-                    <tbody id="breakdownTable">
-                        </tbody>
-                </table>
-            </div>
-        </section>
+        </div>
     </main>
-
-    <footer class="footer academic-footer">
-        <p>หน่วยวิจัยความยั่งยืน | คณะวิศวกรรมศาสตร์ มหาวิทยาลัยเบงจันทร์</p>
-        <p><small>Data Source: Thailand Greenhouse Gas Management Organization (BENGCHANH UNIVERSITY)</small></p>
-    </footer>
 
     <script src="script.js"></script>
 </body>
